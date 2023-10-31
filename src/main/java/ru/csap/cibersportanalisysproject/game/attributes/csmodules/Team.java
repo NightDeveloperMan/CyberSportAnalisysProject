@@ -22,12 +22,15 @@ public class Team{
     private final double teamWinrate; // винрейт команды
     private final double teamKD; // КД команды
     private final double teamEstimatedPoints; // Расчётные очки команды
-    private final boolean ranked; //ранжированность
-    public Team(String url) throws IOException{
+    private boolean ranked; //ранжированность
+
+    private final boolean wasRanked;
+    public Team(String url) throws IOException, InterruptedException {
 
         teamName = url.split("team")[1].split("/")[2];
         teamID = Integer.parseInt(url.split("team")[1].split("/")[1]);
         teamHltvNumber = Integer.parseInt(url.split("team")[1].split("/")[1]);
+        Thread.sleep(6000);
         Document parseDocument = ConnectionServise.connection(url);
         Elements spanTagElements = parseDocument.getElementsByClass("profile-team-stat");
 
@@ -43,8 +46,12 @@ public class Team{
                 result = result.split("<")[0].split(">")[1];
                 if (result.contains("#"))
                 {
+                    ranked = true;
                     tempHltvRating = Integer.parseInt(result.split("#")[1]);
-                } else tempHltvRating = 30000;
+                } else{
+                    ranked = false;
+                    tempHltvRating = -1;
+                }
             }
         }
         hltvRating = tempHltvRating;
@@ -71,11 +78,12 @@ public class Team{
 
         Matcher matcherRank = Pattern.compile("<\\/span>#(\\d+)<\\/a>").matcher(strRank);
         if (matcherRank.find()){
-            ranked = true;
+            wasRanked = true;
             ratingChange = Integer.parseInt(matcherRank.group(1)) - hltvRating;
         } else {
-            ranked = false;
-            ratingChange = 40000;
+            wasRanked = false;
+            ratingChange = -1000;
+            System.out.println("Нестабильное изменение рейтинга");
         }
         parseDocument = ConnectionServise.connection(url.split("team")[0]
                 +"stats/teams/"
@@ -92,6 +100,11 @@ public class Team{
         teamKD = Double.parseDouble(statsElements.get(5).text());
         teamEstimatedPoints = teamEstimatedPoints();
     }
+
+    public boolean isWasRanked() {
+        return wasRanked;
+    }
+
     public String getTeamName() {
         return teamName;
     }

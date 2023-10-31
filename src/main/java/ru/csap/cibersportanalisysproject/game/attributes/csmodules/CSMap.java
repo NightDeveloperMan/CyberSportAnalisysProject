@@ -13,11 +13,13 @@ public class CSMap {
     private final double mapWinrate; // винрейт на карте
     private final double kdOnMap; // кд на карте
     private final double mapEstimatedPoints; // очки команды на карте;
-    public CSMap(Team team, String mapName) throws IOException {
+    public CSMap(Team team, String mapName) throws IOException, InterruptedException {
 
 
         this.mapName = mapName;
         String url = "https://www.hltv.org/";
+
+        Thread.sleep(6000);
         Elements parseElements = ConnectionServise.connection(url + "stats/teams/"
                 + team.getTeamHltvNumber()
                 + "/" + team.getTeamName()

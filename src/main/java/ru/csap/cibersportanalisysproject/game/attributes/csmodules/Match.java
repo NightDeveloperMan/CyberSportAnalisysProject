@@ -7,7 +7,6 @@ import ru.csap.cibersportanalisysproject.game.attributes.servises.ConnectionServ
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +21,7 @@ public class Match {
     private ArrayList<String> csMaps = new ArrayList<>();
     public Match(String url) throws IOException, InterruptedException {
 
+        Thread.sleep(6000);
         Document teamParse = ConnectionServise.connection(url);
         String team1 = teamParse.getElementsByClass("team1-gradient")
                 .toString().split("<div class=\"team1-gradient\">")[1].trim().split("<div class=\\.*")[0]
@@ -44,6 +44,7 @@ public class Match {
             firstTeamResult = firstTeam.getTeamEstimatedPoints() * map.getMapEstimatedPoints();
             map = new CSMap(secondTeam, mapName);
             secondTeamResult = secondTeam.getTeamEstimatedPoints() * map.getMapEstimatedPoints();
+//            if ()
             System.out.printf("               Карта : %s \n          --------------------------- \n Команда: %s                    Команда: %s \n Вероятность победы: %.1f         Вероятность победы: %.1f\n\n"
                     , mapName.toUpperCase(), firstTeam.getTeamName().toUpperCase(), secondTeam.getTeamName().toUpperCase(), firstTeamResult*100/(firstTeamResult+secondTeamResult), secondTeamResult*100/(firstTeamResult+secondTeamResult));
         }
